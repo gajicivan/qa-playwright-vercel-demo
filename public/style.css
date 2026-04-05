@@ -10,7 +10,7 @@ body { font-family: Arial; background:#f4f4f4; text-align:center; }
 }
 input { display:block; margin:10px auto; padding:8px; }
 button {
-  background: #4CAF50;
+  background: #4b4c7c;
   color: white;
   border: none;
   cursor: pointer;
