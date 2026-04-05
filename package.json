@@ -1,0 +1,13 @@
+{
+  "name": "qa-playwright-vercel-demo",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "echo build",
+    "test": "playwright test",
+    "start": "vercel dev"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "typescript": "^5.0.0"
+  }
+}
