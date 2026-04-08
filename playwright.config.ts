@@ -1,13 +1,21 @@
-
 import { defineConfig } from '@playwright/test';
+import * as dotenv from 'dotenv';
+
+// 🔥 bira env (default dev)
+const ENV = process.env.ENV || 'dev';
+
+// učitaj odgovarajući .env fajl
+dotenv.config({ path: `.env.${ENV}` });
 
 export default defineConfig({
+  testDir: './tests',
+
   use: {
-    baseURL: process.env.BASE_URL || 'http://localhost:3000',
-    headless: true,
-    trace: 'on-first-retry'
+    baseURL: process.env.BASE_URL,
+    trace: 'on-first-retry',
   },
-   projects: [
+
+  projects: [
     {
       name: 'setup',
       testMatch: /.*\.setup\.ts/,
@@ -20,5 +28,13 @@ export default defineConfig({
       },
       dependencies: ['setup'],
     },
-  ]
+  ],
+
+  webServer: ENV === 'dev'
+    ? {
+        command: 'npx serve public -l 3000',
+        port: 3000,
+        reuseExistingServer: true,
+      }
+    : undefined,
 });
