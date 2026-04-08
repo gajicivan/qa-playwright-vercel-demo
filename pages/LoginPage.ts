@@ -1,5 +1,5 @@
 
-import { Page } from '@playwright/test';
+import { Page, expect } from '@playwright/test';
 
 export class LoginPage {
   constructor(private page: Page) {}
@@ -13,4 +13,12 @@ export class LoginPage {
     await this.page.fill('#password', password);
     await this.page.click('button');
   }
+
+  async getError() {
+  const error = this.page.locator('.error-message');
+
+  await expect(error).toHaveText(/.+/); // čeka da ima neki tekst
+
+  return error.textContent();
+}
 }

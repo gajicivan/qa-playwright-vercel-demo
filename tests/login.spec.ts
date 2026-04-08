@@ -1,20 +1,25 @@
 import { test, expect } from '@playwright/test';
 import { LoginPage } from '../pages/LoginPage';
+import { users } from '../test-data/users';
 
-test('UI login success', async ({ page }) => {
-  const login = new LoginPage(page);
+test.describe('Login UI', () => {
+  test('should login successfully with valid credentials', async ({ page }) => {
+    const login = new LoginPage(page);
 
-  await login.goto();
-  await login.login('admin', 'admin123');
+    await login.goto();
+    await login.login(users.valid.username, users.valid.password);
 
-  await expect(page).toHaveURL(/dashboard/);
-});
+    await expect(page).toHaveURL(/dashboard/);
+  });
 
-test('UI login fail', async ({ page }) => {
-  const login = new LoginPage(page);
+  test('should show error for invalid credentials', async ({ page }) => {
+    const login = new LoginPage(page);
 
-  await login.goto();
-  await login.login('admin', 'wrong');
+    await login.goto();
+    await login.login(users.invalid.username, users.invalid.password);
 
-  await expect(page).toHaveURL('/');
+    // 🔥 bolja provera
+    const error = await login.getError();
+    expect(error).toContain('Invalid');
+  });
 });
