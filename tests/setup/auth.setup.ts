@@ -3,7 +3,7 @@ import { users } from '../../test-data/users';
 
 setup('authenticate via API', async () => {
   const context = await request.newContext({
-    baseURL: 'http://localhost:3000',
+    baseURL: process.env.BASE_URL || 'http://localhost:3000',
   });
 
   const response = await context.post('/api/login', {
@@ -20,7 +20,7 @@ setup('authenticate via API', async () => {
     cookies: [],
     origins: [
       {
-        origin: 'http://localhost:3000',
+        origin: process.env.BASE_URL || 'http://localhost:3000',
         localStorage: [
           {
             name: 'token',
