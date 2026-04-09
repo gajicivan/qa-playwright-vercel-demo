@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test('API login success', async ({ request }) => {
+test('API login success @smoke @api', async ({ request }) => {
   const response = await request.post('/api/login', {
     data: {
       username: 'admin',
@@ -15,7 +15,7 @@ test('API login success', async ({ request }) => {
   expect(body.token).toBeDefined();
 });
 
-test('API login fail', async ({ request }) => {
+test('API login fail @regression @api' , async ({ request }) => {
   const response = await request.post('/api/login', {
     data: {
       username: 'admin',

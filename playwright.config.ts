@@ -10,6 +10,11 @@ dotenv.config({ path: `.env.${ENV}` });
 export default defineConfig({
   testDir: './tests',
 
+  workers: process.env.CI ? 2 : undefined, // CI ograniči
+  fullyParallel: true,
+
+  retries: process.env.CI ? 2 : 0,
+
   use: {
     baseURL: process.env.BASE_URL,
     trace: 'on-first-retry',

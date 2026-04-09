@@ -4,7 +4,11 @@
   "scripts": {
     "build": "echo build",
     "test": "playwright test",
-    "start": "vercel dev"
+    "start": "vercel dev",
+    "test:smoke": "playwright test -g @smoke",
+    "test:regression": "playwright test -g @regression",
+    "test:ui": "playwright test -g @ui",
+    "test:api": "playwright test -g @api"
   },
   "devDependencies": {
     "@playwright/test": "^1.40.0",

@@ -4,7 +4,21 @@ on:
   push:
     branches: [ main ]
   pull_request:
+  schedule:
+    - cron: '0 2 * * *'
   workflow_dispatch:
+    inputs:
+      test_type:
+        description: 'Choose test suite to run'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - smoke
+          - regression
+          - api
+          - ui
 
 jobs:
   test:
@@ -12,6 +26,11 @@ jobs:
 
     env:
       ENV: prod
+
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1/2, 2/2]
 
     steps:
     - name: Checkout repository
@@ -34,12 +53,42 @@ jobs:
     - name: Install Playwright browsers
       run: npx playwright install chromium --with-deps
 
-    - name: Run Playwright tests
-      run: npx playwright test
+    # 🔥 PR → SMOKE
+    - name: Run smoke tests (PR)
+      if: github.event_name == 'pull_request'
+      run: npx playwright test -g @smoke --shard=${{ matrix.shard }}
+
+    # 🔥 PUSH → SMOKE
+    - name: Run smoke tests (push)
+      if: github.event_name == 'push'
+      run: npx playwright test -g @smoke --shard=${{ matrix.shard }}
+
+    # 🌙 NIGHTLY → REGRESSION
+    - name: Run regression tests (nightly)
+      if: github.event_name == 'schedule'
+      run: npx playwright test -g @regression --shard=${{ matrix.shard }}
+
+    # 🖐 MANUAL → CUSTOM
+    - name: Run selected tests (manual)
+      if: github.event_name == 'workflow_dispatch'
+      run: |
+        echo "Running test type: ${{ github.event.inputs.test_type }}"
+
+        if [ "${{ github.event.inputs.test_type }}" = "smoke" ]; then
+          npx playwright test -g @smoke --shard=${{ matrix.shard }}
+        elif [ "${{ github.event.inputs.test_type }}" = "regression" ]; then
+          npx playwright test -g @regression --shard=${{ matrix.shard }}
+        elif [ "${{ github.event.inputs.test_type }}" = "api" ]; then
+          npx playwright test -g @api --shard=${{ matrix.shard }}
+        elif [ "${{ github.event.inputs.test_type }}" = "ui" ]; then
+          npx playwright test -g @ui --shard=${{ matrix.shard }}
+        else
+          npx playwright test --shard=${{ matrix.shard }}
+        fi
 
     - name: Upload Playwright report
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: playwright-report
+        name: playwright-report-${{ matrix.shard }}
         path: playwright-report/

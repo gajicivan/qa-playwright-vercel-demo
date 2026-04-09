@@ -3,7 +3,7 @@ import { LoginPage } from '../pages/LoginPage';
 import { users } from '../test-data/users';
 
 test.describe('Login UI', () => {
-  test('should login successfully with valid credentials', async ({ page }) => {
+  test('should login successfully with valid credentials @smoke @ui', async ({ page }) => {
     const login = new LoginPage(page);
 
     await login.goto();
@@ -12,7 +12,7 @@ test.describe('Login UI', () => {
     await expect(page).toHaveURL(/dashboard/);
   });
 
-  test('should show error for invalid credentials', async ({ page }) => {
+  test('should show error for invalid credentials @regression @ui', async ({ page }) => {
     const login = new LoginPage(page);
 
     await login.goto();
